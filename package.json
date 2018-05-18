@@ -1,0 +1,26 @@
+{
+  "name": "miturn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha",
+    "knex": "knex"
+  },
+  "author": "scott.deakin@kantar.com",
+  "license": "ISC",
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "eslint": "^4.19.1",
+    "knex": "^0.14.6",
+    "koa": "^2.5.1",
+    "koa-bodyparser": "^4.2.0",
+    "koa-hbs-renderer": "^1.2.0",
+    "koa-router": "^7.4.0",
+    "koa-static": "^4.0.3",
+    "mssql": "git+https://github.com/GeekyDeaks/node-mssql.git",
+    "socket.io": "^2.1.1",
+    "sqlite3": "^4.0.0",
+    "winston": "^2.4.2"
+  }
+}
