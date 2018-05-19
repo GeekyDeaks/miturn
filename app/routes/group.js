@@ -9,8 +9,11 @@ const { auth } = require('../middleware/session')
 
 router.get('/:group',  auth, async function (ctx) {
 
-    await ctx.cookies.set('miturnsession', ctx.session)
-    await ctx.render('group', { text: 'hello!'})
+    await ctx.render('group', { 
+        text: 'hello!', 
+        group: ctx.params.group, 
+        session: ctx.session
+    })
 
 })
 

@@ -12,22 +12,24 @@ async function createSession(email) {
 
     let user_id
     // find the user
-    const user = await knex('user').first().where({ email })
+    let user = await knex('user').first().where({ email })
 
     if(!user) {
         // create the user
         const name = parse(email)
-        user_id = await knex('user').insert({ email, name })
-    } else {
-        user_id = user.id
+        await knex('user').insert({ email, name })
+        // knex is inconsistent with returning across db type, so we just 
+        // search again to get the id
+        user = await knex('user').first().where({ email })
     }
 
+    if(!user) throw new Error('unable to find/create user: ' + email)
     // find the session
-    const session = await knex('session').first('id').where({ user_id })
+    const session = await knex('session').first('id').where({ user_id: user.id })
 
     if(!session) {
         const id = uuidv4()
-        await knex('session').insert({ id, user_id })
+        await knex('session').insert({ id, user_id: user.id })
         return id
     } else {
         return session.id

@@ -41,10 +41,11 @@ const app = new Koa()
 const http = require('http')
 const server = http.createServer(app.callback())
 const io = require('socket.io')(server)
+require('./handler')(io)
+
 const serve = require('koa-static')
 const renderer = require('koa-hbs-renderer')
 const { promisify } = require('util')
-const cookie = require('cookie')
 
 // default error handling
 process.on('unhandledRejection', (reason, p) => { 
@@ -72,13 +73,6 @@ app.use(renderer({
 
 logger.info('Installing routes')
 app.use(require('./routes/group'))
-
-io.on('connection', function(socket) {
-    logger.debug('connection from %s', socket.id)
-    logger.debug('handshake %j', socket.handshake)
-    logger.debug('cookie %j', cookie.parse(socket.handshake.headers.cookie))
-})
-
 
 logger.info('Start server')
 async function init () {
