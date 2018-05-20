@@ -37,8 +37,8 @@ async function getState(group_id, user_id) {
             timestamp: r.updated_at,
             requests: []
         }
-        if(r.rounds)
-            r.rounds.forEach( r => {
+        if(r.requests)
+            r.requests.forEach( r => {
                 round.requests.push({
                     request: r.request,
                     user: r.user.name

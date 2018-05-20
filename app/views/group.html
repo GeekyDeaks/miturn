@@ -7,13 +7,11 @@
     </head>
     <body>
         <div id="app">
-            \{{ message }}
-            <pre>\{{state}}</pre>
+            {{ message }}
+            <pre>{{state}}</pre>
         </div>
-        
-
 
         <script src="/js/miturn.js"></script>
-        <script>app = startVue('{{ group }}', '{{ session }}')</script>
+        <script>app = startVue('<%= group %>', '<%= session %>')</script>
     </body>
 </html>

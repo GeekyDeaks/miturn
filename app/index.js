@@ -50,7 +50,7 @@ const io = require('socket.io')(server)
 require('./handler')(io)
 
 const serve = require('koa-static')
-const renderer = require('koa-hbs-renderer')
+const render = require('koa-ejs')
 const { promisify } = require('util')
 
 // default error handling
@@ -71,13 +71,16 @@ app.use(bodyParser())
 
 logger.info('Installing middleware')
 app.use(require('./middleware/logger'))
-app.use(renderer({
-    paths: {
-        views: path.join(__dirname, 'views')
-    }
-}))
+render(app, {
+    root: path.join(__dirname, 'views'),
+    layout: false,
+    viewExt: 'html',
+    cache: false,
+    debug: true
+})
 
 logger.info('Installing routes')
+app.use(require('./routes/api'))
 app.use(require('./routes/group'))
 
 logger.info('Start server')
