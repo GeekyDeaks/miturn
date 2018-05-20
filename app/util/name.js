@@ -8,7 +8,7 @@ function parse(email) {
     const re = /^(.+)@.+$/
     const m = re.exec(email)
     if(m) {
-        return(m[1].replace(/\./ /g))
+        return m[1].replace(/\./g, ' ')
     }
     // was not able to parse
     return(email)
