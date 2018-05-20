@@ -4,43 +4,33 @@ const config = require('../../config')
 const { HTTP_UNAUTHORIZED } = require('../util/const')
 const logger = require('winston')
 
-const uuidv4 = require('uuid/v4')
-const knex = require('../util/knex')
 const { parse } = require('../util/name')
+
+const Session = require('../models/session')
+const User = require('../models/user')
 
 async function createSession(email) {
 
     let user_id
     // find the user
-    let user = await knex('user').first().where({ email })
+    let user = await User.query().findOne({ email }).eager('session')
 
     if(!user) {
         // create the user
         const name = parse(email)
-        await knex('user').insert({ email, name })
-        // knex is inconsistent with returning across db type, so we just 
-        // search again to get the id
-        user = await knex('user').first().where({ email })
+        user = await User.query().insert({ email, name })
     }
 
     if(!user) throw new Error('unable to find/create user: ' + email)
     // find the session
-    const session = await knex('session').first('id').where({ user_id: user.id })
+    if(user.session) return user.session.id
 
-    if(!session) {
-        const id = uuidv4()
-        await knex('session').insert({ id, user_id: user.id })
-        return id
-    } else {
-        return session.id
-    }
+    const session = await Session.query().insert({ user_id: user.id })
+    return session.id
+
 }
 
-function lookup(id) {
-    return knex('session').first().where({ id })
-}
-
-async function auth(ctx, next) {
+module.exports = async function auth(ctx, next) {
 
     let email
 
@@ -64,9 +54,4 @@ async function auth(ctx, next) {
     ctx.session = await createSession(email)
     await next()
 
-}
-
-module.exports = {
-    lookup,
-    auth
 }

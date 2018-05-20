@@ -32,6 +32,12 @@ logger.add(logger.transports.File, {
     colorize: false
 })
 
+
+logger.info('Setting up ORM')
+const { Model } = require('objection')
+const knex = require('knex')(config.db)
+Model.knex(knex)
+
 logger.info('App starting')
 
 const DEFAULT_PORT = 3000
