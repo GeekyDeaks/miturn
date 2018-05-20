@@ -18,7 +18,7 @@ async function getState(group_id, user_id) {
     const REQUESTS = 100
     // get the 
     //await.knex()
-    const rounds = await Round.query().where({ group_id})
+    const rawRounds = await Round.query().where({ group_id})
                         .orderBy('id', 'desc').limit(ROUNDS)
                         .eager('[requests, requests.user, user]')
 
@@ -28,6 +28,24 @@ async function getState(group_id, user_id) {
                         .where({ 'request.user_id': user_id, 'round.group_id': group_id })
                         .groupBy('request')
                         .orderBy('last', 'desc')             
+
+
+    const rounds = []
+    rawRounds.forEach( r => {
+        const round = {
+            user: r.user ? r.user.name : '',
+            timestamp: r.updated_at,
+            requests: []
+        }
+        if(r.rounds)
+            r.rounds.forEach( r => {
+                round.requests.push({
+                    request: r.request,
+                    user: r.user.name
+                })
+            })
+        rounds.unshift(round)
+    })
 
     return {
         rounds,
@@ -56,7 +74,7 @@ module.exports = function(io) {
 
         logger.debug('looking up group: %s', group_name)
         const group = await Group.query().findOne({ name: group_name })
-
+        if(!group) return socket.emit('nogroup')
 
         // setup the handler
         socket.on('request', async (req) => {
