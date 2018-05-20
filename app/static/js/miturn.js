@@ -1,11 +1,12 @@
-
+/* eslint-disable */
 function startVue(group, session) {
 
   return new Vue({
     el: '#app',
     data: {
       message: 'Hello Vue!',
-      state: {}
+      rounds: [],
+      recent: []
     },
     created: function() {
 
@@ -24,8 +25,12 @@ function startVue(group, session) {
         console.log('socket.io connected')
       })
 
-      this.io.on('state', function(state) {
-        that.state = JSON.stringify(state,null,4)
+      this.io.on('rounds', function(rounds) {
+        that.rounds = JSON.stringify(rounds, null, 4)
+      })
+
+      this.io.on('recent', function(recent) {
+        that.recent = JSON.stringify(recent, null, 4)
       })
   
   

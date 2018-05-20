@@ -1,10 +1,9 @@
 'use strict'
 
-const logger = require('winston')
 const Router = require('koa-router')
 const router = new Router()
 
-router.get('/api/:key', async function (ctx) {
+router.get('/api/:key', function (ctx) {
 
     ctx.body = ctx.params.key
 

@@ -11,7 +11,7 @@ const User = require('../models/user')
 
 async function createSession(email) {
 
-    let user_id
+    logger.debug('looking up session for %s', email)
     // find the user
     let user = await User.query().findOne({ email }).eager('session')
 
@@ -24,7 +24,7 @@ async function createSession(email) {
     if(!user) throw new Error('unable to find/create user: ' + email)
     // find the session
     if(user.session) return user.session.id
-
+    logger.debug('creating new session for %s %s', user.id, user.name)
     const session = await Session.query().insert({ user_id: user.id })
     return session.id
 

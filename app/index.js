@@ -19,7 +19,7 @@ logger.add(logger.transports.Console, {
     handleExceptions: true,
     stderrLevels: ['error']
 })
-const MS_IN_SEC = 1000
+
 logger.add(logger.transports.File, {
     prettyPrint: true, 
     level: config.logger || 'info',
