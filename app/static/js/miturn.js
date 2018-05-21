@@ -33,6 +33,9 @@ Vue.component('round-item',  {
       //return ts.format('YY-MM-DD HH:MM')
       ts.local()
       return ts.format('ddd MMM D HH:mm')
+    },
+    visible: function() {
+      return this.round.active || this.round.visible
     }
   },
   methods: {
