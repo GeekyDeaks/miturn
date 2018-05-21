@@ -12,7 +12,7 @@
 
         <!-- Templates -->
         <script type="text/x-template" id="recent-item-template">
-            <div class="col-xs-12">
+            <div class="col-xs-12" v-on:click.prevent="newRequest(recent, round)">
                 <div class="recent">{{ recent }}</div>
             </div>
         </script>
@@ -21,7 +21,7 @@
         
             <div class="row no-gutters">
                 <div class="col-xs-1">
-                    <div v-if="isMyRequest" class="request-delete">X</div>
+                    <div v-if="isMyRequest" v-on:click.prevent="remove(request)" class="request-delete">X</div>
                 </div>
                 <div class="col-xs-5">
                     <div class="request-user">{{ request.user }}</div>
@@ -55,26 +55,27 @@
                         v-bind:request="request"
                         v-bind:key="request.id">
                     </request-item>
-                    <div v-if="showNewRequest" class="row no-gutters">
-                        <div class="col-xs-12">
-                            <div class="new-request">New Request</div>
-                        </div>
-                        <recent-item
-                            v-for="recent in recents"
-                            v-bind:recent="recent"
-                            v-bind:key="recent">
-                        </recent-item>
-                    </div>
                     <div v-if="showAccept" class="row no-gutters">
                         <div class="col-xs-12">
                             <div class="accept-round">Get this Round!</div>
                         </div>
                     </div>
+                    <div v-if="showNewRequest" class="row no-gutters">
+                        <div class="col-xs-12" v-on:click.prevent="toggleRecent">
+                            <div class="new-request">New Request</div>
+                        </div>
+                        <recent-item
+                            v-if="showRecent"
+                            v-for="recent in recents"
+                            v-bind:recent="recent"
+                            v-bind:round="round"
+                            v-bind:key="recent">
+                        </recent-item>
+                    </div>
+
                 </div>
             </div>
         </script>
-
-
 
     </head>
     <body>

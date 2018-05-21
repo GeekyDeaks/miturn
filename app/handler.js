@@ -122,12 +122,27 @@ module.exports = function(io) {
         const group = await Group.query().findOne({ name: group_name })
         if(!group) return socket.emit('nogroup')
 
+        async function broadcastUpdate() {
+            const rounds = await getRounds(group.id)
+            io.to(group.name).emit('rounds', rounds)
+        }
+
         // setup the handler
-        socket.on('request', async () => {
+        socket.on('request', async (request, round_id) => {
+            // should we check there is an active 
+            const req = await Request.query().insert({
+                request,
+                user_id: session.user.id,
+                round_id
+            })
 
+            if(req) broadcastUpdate()
         })
-        socket.on('remove', async () => {
+        socket.on('remove', async (id) => {
+            const req = await Request.query().delete()
+                .where('id', id)
 
+            if(req) broadcastUpdate()
         })
 
         socket.on('round', async () => {
@@ -158,7 +173,7 @@ module.exports = function(io) {
         socket.emit('rounds', rounds)
 
         // join the group broadcast
-        socket.join(group_name)
+        socket.join(group.name)
         
     })
 
