@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="/css/miturn.css">
         <script src="/js/vue.js"></script>
         <script src="/js/socket.io.dev.js"></script>
+        <script src="/js/moment.js"></script>
 
 
         <!-- Templates -->
@@ -41,7 +42,7 @@
                 <div class="row no-gutters" v-on:click.prevent="toggleVisible">
                     <div class="col-xs-1"><div class="round-id">{{ round.id }}</div></div>
                     <div class="col-xs-6"><div class="round-timestamp">
-                        {{ round.timestamp }}
+                        {{ timestamp }}
                     </div></div>
                     <div v-show="round.user" class="col-xs-5">
                         <div class="round-user">

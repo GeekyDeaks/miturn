@@ -4,9 +4,6 @@
 Vue.component('round-item',  {
   props: ['round', 'index'],
   template: '#round-item-template',
-  data: function() {
-    return { requestInput: '' }
-  },
   computed: {
     haveActiveRequest: function() {
       var req = this.round.requests.find(function(r) {
@@ -30,6 +27,12 @@ Vue.component('round-item',  {
     },
     showRecent: function() {
       return app.showRecent
+    },
+    timestamp: function() {
+      var ts = moment.utc(this.round.timestamp)
+      //return ts.format('YY-MM-DD HH:MM')
+      ts.local()
+      return ts.format('ddd MMM D HH:mm')
     }
   },
   methods: {
