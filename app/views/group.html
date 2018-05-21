@@ -8,14 +8,80 @@
         <link rel="stylesheet" href="/css/miturn.css">
         <script src="/js/vue.js"></script>
         <script src="/js/socket.io.dev.js"></script>
+
+
+        <!-- Templates -->
+
+        <script type="text/x-template" id="request-item-template">
+        
+            <div class="row no-gutters">
+                <div class="col-xs-1">
+                    <div v-if="isMyRequest" class="request-delete">X</div>
+                </div>
+                <div class="col-xs-4"><div class="request-user">{{ request.user }}</div></div>
+                <div class="col-xs-6">
+                    <div class="request-request">{{ request.request }}</div>
+                </div>
+                <div class="col-xs-1">
+                    <div v-bind:class="deltaClass">{{ request.delta }}</div>
+                </div>
+            </div>
+        </script>
+
+
+        <script type="text/x-template" id="round-item-template">
+            <div>
+                <div class="row no-gutters" v-on:click="toggleVisible">
+                    <div class="col-xs-1"><div class="round-id">{{ round.id }}</div></div>
+                    <div class="col-xs-5"><div class="round-timestamp">
+                        {{ round.timestamp }}
+                    </div></div>
+                    <div v-show="round.user" class="col-xs-6">
+                        <div class="round-user">
+                            {{ round.user }}
+                        </div>
+                    </div>
+                </div>
+                <div v-if="round.visible">
+                    <request-item
+                        v-for="request in round.requests"
+                        v-bind:request="request"
+                        v-bind:key="request.id">
+                    </request-item>
+                    <div v-if="showNewRequest" class="row no-gutters">
+                        <div class="col-xs-12">
+                            <div class="new-request">New Request</div>
+                        </div>
+                    </div>
+                    <div v-if="showAccept" class="row no-gutters">
+                        <div class="col-xs-12">
+                            <div class="accept-round">Get this Round!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+
+
     </head>
     <body>
         <div id="app">
-            {{ message }}
+            <h1><%= group %></h1>
             <hr/>
-            <pre>{{rounds}}</pre>
-            <hr/>
-            <pre>{{recent}}</pre>
+            <div v-cloak>
+                <round-item
+                    v-for="round in rounds"
+                    v-bind:round="round"
+                    v-bind:key="round.id">
+                </round-item>
+                <div v-if="showNewRound" class="row no-gutters">
+                    <div class="col-xs-12">
+                        <div class="new-round">New Round</div>
+                    </div>
+                </div>
+                
+            </div>
         </div>
 
         <script src="/js/miturn.js"></script>

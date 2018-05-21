@@ -2,7 +2,7 @@
 
 exports.up = function(knex) {
     return knex.schema.createTable('round', function (t) {
-        t.increments('id').primary()
+        t.integer('id').primary()
         t.timestamps(true, true)
         t.integer('group_id').notNullable()
         t.integer('user_id') // who claimed the round

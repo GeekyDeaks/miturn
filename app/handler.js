@@ -23,7 +23,7 @@ async function getRecentRequests(group_id, user_id) {
 
 async function getRounds(group_id) {
 
-    const ROUNDS = 3
+    const ROUNDS = 5
 
     // get the 
     //await.knex()
@@ -38,11 +38,13 @@ async function getRounds(group_id) {
         .whereNotNull('round.user_id')  // only count rounds that have been completed
         .groupBy('request.user_id')
 
-    const roundsTotal = await Round.query()
-        .select('user_id').count('user_id as total')
-        .where({ group_id })
-        .whereNotNull('user_id')
-        .groupBy('user_id')
+    const roundsTotal =  await Round.query()
+        .select('round.user_id').count('round.user_id as total')
+        .innerJoin('request', 'round.id', 'request.round_id')
+        .where({ 'round.group_id': group_id })
+        .andWhere('request.user_id', '!=', 'round.user_id')
+        .whereNotNull('round.user_id')  // only count rounds that have been completed
+        .groupBy('round.user_id')
 
     // build up a map of totals for each user
     const total = {}
@@ -58,6 +60,7 @@ async function getRounds(group_id) {
             user: rd.user ? rd.user.name : null,
             id: rd.id,
             timestamp: rd.updated_at,
+            active: rd.user ? false : true,
             requests: []
         }
         if(rd.requests)
@@ -65,7 +68,8 @@ async function getRounds(group_id) {
                 const req = {
                     id: rt.id,
                     request: rt.request,
-                    user: rt.user.name
+                    user: rt.user.name,
+                    active: round.active
                 }
                 if(!rd.user) {
                     // lookup the user totals
@@ -76,6 +80,8 @@ async function getRounds(group_id) {
                         // no previous history
                         req.requests = req.rounds = 0
                     }
+                    req.delta = req.rounds - req.requests
+                    req.user_id = rt.user.id
                 }
                 round.requests.push(req)
             })
@@ -114,15 +120,36 @@ module.exports = function(io) {
         socket.on('remove', async () => {
 
         })
+
+        socket.on('round', async () => {
+            // try and create a new round with an
+            // id one more that the largest id of
+            // all rounds not in this group or
+            // that are inactive in this group
+            const max_id = await Round().query()
+                .max('id')
+                .where('group_id', '!=', group.id)
+                .orNull('user_id')
+
+            if(max_id) {
+                // do something
+            }
+        })
         socket.on('accept', async () => {
 
         })
 
         // send some initial data
-        const rounds = await getRounds(group.id)
-        socket.emit('rounds', rounds)
+        socket.emit('user', session.user.id)
+
         const recent = await getRecentRequests(group.id, session.user_id)
         socket.emit('recent', recent)
+
+        const rounds = await getRounds(group.id)
+        socket.emit('rounds', rounds)
+
+        // join the group broadcast
+        socket.join(group_name)
         
     })
 

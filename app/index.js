@@ -76,7 +76,7 @@ render(app, {
     layout: false,
     viewExt: 'html',
     cache: false,
-    debug: true
+    debug: false
 })
 
 logger.info('Installing routes')

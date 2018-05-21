@@ -16,22 +16,28 @@ exports.seed = async function(knex) {
     await knex('group').insert([{
         name: 'koffee'
     }, {
-        name: 'breakfast'
+        name: 'vendor'
     }])
 
     await knex('round').insert([{
+        id: 1,
         group_id: 1,
         user_id: 2
     },{
+        id: 2,
         group_id: 1,
         user_id: 1
     },{
+        id: 3,
         group_id: 1
     },{
+        id: 4,
         group_id: 2,
         user_id: 3
     },{ 
-        group_id: 2
+        id: 5,
+        group_id: 2,
+        user_id: 2
     }])
 
     await knex('request').insert([{
@@ -78,6 +84,10 @@ exports.seed = async function(knex) {
         user_id: 1,
         round_id: 5,
         request: '018'
+    }, {
+        user_id: 2,
+        round_id: 5,
+        request: 'water'
     }])
 
 }
