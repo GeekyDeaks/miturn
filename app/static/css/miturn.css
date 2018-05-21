@@ -37,6 +37,18 @@ body {
     border-radius: 3px;
 }
 
+.round-active {
+    background-color: lightgray;
+    border-radius: 3px;
+    margin-top: 10px;
+}
+
+.round-inactive {
+    background-color: white;
+    border-radius: 3px;
+    margin-top: 10px;
+}
+
 .round-id {
     background-color: #007b7b;
     color: white;
@@ -131,7 +143,7 @@ body {
     text-align: center;
     margin: 2px;
     border-radius: 3px;
-    padding: 14px;
+    padding: 5px;
     cursor: pointer;
 }
 
@@ -171,6 +183,5 @@ body {
     text-align: center;
     margin: 2px;
     border-radius: 3px;
-    padding: 5px;
     cursor: pointer;
 }

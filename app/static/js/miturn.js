@@ -22,7 +22,8 @@ Vue.component('round-item',  {
       return this.round.active && this.haveActiveRequest
     },
     roundClass: function() {
-      return this.index % 2 ? 'odd-round' : 'even-round'
+      //return this.index % 2 ? 'odd-round' : 'even-round'
+      return this.round.active ? 'round-active' : 'round-inactive'
     },
     recents: function() {
       return app.recents

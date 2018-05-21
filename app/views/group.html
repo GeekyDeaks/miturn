@@ -60,28 +60,28 @@
                             <div class="accept-round">Get this Round!</div>
                         </div>
                     </div>
-                    <div v-if="showNewRequest" class="row no-gutters">
-                        <div class="col-xs-12" v-on:click.prevent="toggleRecent">
-                            <div class="new-request">New Request</div>
-                        </div>
-                        <recent-item
-                            v-if="showRecent"
-                            v-for="recent in recents"
-                            v-bind:recent="recent"
-                            v-bind:round="round"
-                            v-bind:key="recent">
-                        </recent-item>
+                    <div v-if="showNewRequest" class="row no-gutters new-request">
+                        <div class="col-xs-12">
+                            <recent-item
+                                v-for="recent in recents"
+                                v-bind:recent="recent"
+                                v-bind:round="round"
+                                v-bind:key="recent">
+                            </recent-item>
 
-                        <div class="col-sm-12" v-if="showRecent">
-                            <div class="input-group request-input">
-                              <input type="text" class="form-control" 
-                                v-model="requestInput" placeholder="Enter request"
-                                v-on:keyup.enter.prevent="newRequestInput(round)">
-                              <span class="input-group-btn">
-                                <button class="btn btn-default" type="submit" v-on:click.prevent="newRequestInput(round)">Submit</button>
-                              </span>
+                            <div class="col-sm-12">
+                                <div class="input-group request-input">
+                                <input type="text" class="form-control" 
+                                    v-model="requestInput" placeholder="Enter request"
+                                    v-on:keyup.enter.prevent="newRequestInput(round)">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit" v-on:click.prevent="newRequestInput(round)">Submit</button>
+                                </span>
+                                </div>
                             </div>
-                          </div>
+
+                        </div>
+
                     </div>
 
                 </div>
