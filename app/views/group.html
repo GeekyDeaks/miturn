@@ -56,7 +56,7 @@
                         v-bind:key="request.id">
                     </request-item>
                     <div v-if="showAccept" class="row no-gutters">
-                        <div class="col-xs-12">
+                        <div class="col-xs-12" v-on:click.prevent="acceptRound(round)">
                             <div class="accept-round">Get this Round!</div>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                     v-bind:key="round.id">
                 </round-item>
                 <div v-if="showNewRound" class="row no-gutters">
-                    <div class="col-xs-12">
+                    <div class="col-xs-12" v-on:click.prevent="newRound">
                         <div class="new-round">New Round</div>
                     </div>
                 </div>

@@ -13,7 +13,7 @@ Vue.component('round-item',  {
     },
     showNewRequest: function() {
       // check if we have an active request
-      return this.round.active
+      return this.round.active && !this.haveActiveRequest
     },
     showAccept: function() {
       return this.round.active && this.haveActiveRequest
@@ -34,6 +34,9 @@ Vue.component('round-item',  {
     },
     toggleRecent: function() {
       app.showRecent = !app.showRecent
+    },
+    acceptRound: function(round) {
+      app.io.emit('accept', round)
     }
   }
 })
@@ -69,6 +72,7 @@ Vue.component('recent-item', {
   methods: {
     newRequest: function(item, round) {
       console.log('new request: ', item, round)
+      app.showRecent = false
       app.io.emit('request', item, round.id)
     }
   }
@@ -93,6 +97,11 @@ function startVue(group, session) {
         })
         // show new round if we did not find anything
         return !rd
+      }
+    },
+    methods: {
+      newRound: function() {
+        app.io.emit('round')
       }
     },
     created: function() {
