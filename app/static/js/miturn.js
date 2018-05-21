@@ -4,6 +4,9 @@
 Vue.component('round-item',  {
   props: ['round', 'index'],
   template: '#round-item-template',
+  data: function() {
+    return { requestInput: '' }
+  },
   computed: {
     haveActiveRequest: function() {
       var req = this.round.requests.find(function(r) {
@@ -37,6 +40,12 @@ Vue.component('round-item',  {
     },
     acceptRound: function(round) {
       app.io.emit('accept', round)
+    },
+    newRequestInput: function(round) {
+      // request-input
+      console.log('new input request:', this.requestInput, round)
+      app.showRecent = false
+      app.io.emit('request', this.requestInput, round.id)
     }
   }
 })
@@ -69,6 +78,7 @@ Vue.component('request-item', {
 Vue.component('recent-item', {
   props: ['recent', 'round'],
   template: '#recent-item-template',
+
   methods: {
     newRequest: function(item, round) {
       console.log('new request: ', item, round)
@@ -87,7 +97,8 @@ function startVue(group, session) {
       rounds: [],
       recents: [],
       user_id: null,
-      showRecent: false
+      showRecent: false,
+      requestInput: null
     },
     computed: {
       showNewRound: function() {

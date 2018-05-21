@@ -137,7 +137,12 @@ module.exports = function(io) {
                 round_id
             })
 
-            if(req) broadcastUpdate()
+            if(req) {
+                broadcastUpdate()
+                // update the recents
+                const recents = await getRecentRequests(group.id, user_id)
+                socket.emit('recents', recents)
+            }
         })
         socket.on('remove', async (id) => {
             const req = await Request.query().delete()
