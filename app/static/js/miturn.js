@@ -2,7 +2,7 @@
 
 
 Vue.component('round-item',  {
-  props: ['round'],
+  props: ['round', 'index'],
   template: '#round-item-template',
   computed: {
     haveActiveRequest: function() {
@@ -17,6 +17,12 @@ Vue.component('round-item',  {
     },
     showAccept: function() {
       return this.round.active && this.haveActiveRequest
+    },
+    roundClass: function() {
+      return this.index % 2 ? 'odd-round' : 'even-round'
+    },
+    recents: function() {
+      return app.recents
     }
   },
   methods: {
@@ -45,6 +51,16 @@ Vue.component('request-item', {
   }
 })
 
+Vue.component('recent-item', {
+  props: ['recent'],
+  template: '#recent-item-template',
+  methods: {
+    onClick: function(item) {
+      console.log('clicked on: ', item)
+    }
+  }
+})
+
 
 function startVue(group, session) {
 
@@ -52,7 +68,7 @@ function startVue(group, session) {
     el: '#app',
     data: {
       rounds: [],
-      recent: [],
+      recents: [],
       user_id: null
     },
     computed: {
@@ -101,8 +117,8 @@ function startVue(group, session) {
         that.rounds = rounds
       })
 
-      this.io.on('recent', function(recent) {
-        that.recent = recent
+      this.io.on('recents', function(recents) {
+        that.recents = recents
       })
 
       this.io.on('user', function(user_id) {

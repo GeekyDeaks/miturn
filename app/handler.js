@@ -5,11 +5,20 @@
  */
 
 const logger = require('winston')
+const moment = require('moment')
 
 const Session = require('./models/session')
 const Group = require('./models/group')
 const Round = require('./models/round')
 const Request = require('./models/request')
+
+function formatTimestamp(timestamp) {
+
+    const ts = moment.utc(timestamp)
+    //return ts.format('YY-MM-DD HH:MM')
+    return ts.format('ddd MMM D HH:MM')
+
+}
 
 async function getRecentRequests(group_id, user_id) {
     const recent = await Request.query()
@@ -59,7 +68,7 @@ async function getRounds(group_id) {
         const round = {
             user: rd.user ? rd.user.name : null,
             id: rd.id,
-            timestamp: rd.updated_at,
+            timestamp: formatTimestamp(rd.updated_at),
             active: rd.user ? false : true,
             requests: []
         }
@@ -142,8 +151,8 @@ module.exports = function(io) {
         // send some initial data
         socket.emit('user', session.user.id)
 
-        const recent = await getRecentRequests(group.id, session.user_id)
-        socket.emit('recent', recent)
+        const recents = await getRecentRequests(group.id, session.user_id)
+        socket.emit('recents', recents)
 
         const rounds = await getRounds(group.id)
         socket.emit('rounds', rounds)
