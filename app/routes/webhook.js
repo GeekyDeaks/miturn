@@ -10,7 +10,7 @@ const Round = require('../models/round')
 const Request = require('../models/request')
 const handler = require('../handler')
 
-router.post('/webhook/:key', async function (ctx) {
+router.all('/webhook/:key', async function (ctx) {
 
     ctx.body = ctx.params.key
 
@@ -31,9 +31,11 @@ router.post('/webhook/:key', async function (ctx) {
         })
         handler.broadcastUpdate(group_id)
         ctx.status = HTTP_CREATED
+        ctx.body = 'OK'
     } catch(ex) {
         logger.error('failed to create webook request: %j', hook, ex)
         ctx.status = HTTP_CONFLICT
+        ctx.body = 'Failed'
     }
 
 })

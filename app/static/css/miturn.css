@@ -226,6 +226,11 @@ body {
     cursor: pointer;
 }
 
+.webhook-header {
+    text-align: center;
+    padding: 5px;
+}
+
 .request-input {
     background-color: #505090;
     color: white;

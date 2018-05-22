@@ -76,23 +76,23 @@
                                 v-bind:key="recent">
                             </recent-item>
 
-                            <div class="col-sm-12">
-                                <div class="input-group request-input">
-                                <input type="text" class="form-control" 
-                                    v-model="requestInput" placeholder="Enter request"
-                                    v-on:keyup.enter.prevent="newRequestInput(round)">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="submit" v-on:click.prevent="newRequestInput(round)">Submit</button>
-                                </span>
+                            <div class="row no-gutters">
+                                <div class="col-xs-12">
+                                    <div class="input-group request-input">
+                                        <input type="text" class="form-control" 
+                                            v-model="requestInput" placeholder="Enter request"
+                                            v-on:keyup.enter.prevent="newRequestInput(round)">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit" v-on:click.prevent="newRequestInput(round)">Submit</button>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
+
         </script>
 
     </head>
@@ -115,6 +115,12 @@
                 <div v-if="showNewRound" class="row no-gutters">
                     <div class="col-xs-12" v-on:click.prevent="newRound">
                         <div class="new-round">New Round</div>
+                    </div>
+                </div>
+                <div class="row no-gutters" v-if="webhookUrl">
+                    <div class="webhook-header">Webhook</div>
+                    <div class="col-xs-12">
+                            <input type="text" class="form-control" v-model="webhookUrl">
                     </div>
                 </div>
                 
