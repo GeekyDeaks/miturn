@@ -12,6 +12,7 @@ const Round = require('./models/round')
 const Request = require('./models/request')
 
 async function getRecentRequests(group_id, user_id) {
+    logger.debug('getting recents for %s / %s', group_id, user_id)
     const recent = await Request.query()
         .select('request').max('request.id as last')
         .innerJoin('round', 'round.id', 'request.round_id')
@@ -108,14 +109,15 @@ module.exports = function(io) {
         logger.debug('looking up session: %s', session_id)
         const session = await Session.query().findById(session_id).eager('user')
         if(!session) return socket.emit('nosession')
-        const user_id = session.user.id
+        const user_id = parseInt(session.user.id, 10)
 
         logger.debug('looking up group: %s', group_name)
         const group = await Group.query().findOne({ name: group_name })
         if(!group) return socket.emit('nogroup')
+        const group_id = parseInt(group.id, 10)
 
         async function broadcastUpdate() {
-            const rounds = await getRounds(group.id)
+            const rounds = await getRounds(group_id)
             io.to(group.name).emit('rounds', rounds)
         }
 
@@ -124,6 +126,7 @@ module.exports = function(io) {
             logger.info('new request from user %s: %s, round: %s', user_id, request, round_id)
             // should we check there is an active 
             try {
+                round_id = parseInt(round_id, 10)
                 const req = await Request.query().insertAndFetch({
                     request,
                     user_id,
@@ -134,7 +137,7 @@ module.exports = function(io) {
                 if(req) {
                     broadcastUpdate()
                     // update the recents
-                    const recents = await getRecentRequests(group.id, user_id)
+                    const recents = await getRecentRequests(group_id, user_id)
                     socket.emit('recents', recents)
                 }
             } catch(ex) {
@@ -145,6 +148,7 @@ module.exports = function(io) {
         socket.on('remove', async (id) => {
             logger.info('remove request from user %s: %s', user_id, id)
             try {
+                id = parseInt(id, 10)
                 const req = await Request.query().delete()
                     .where('id', id)
 
@@ -164,15 +168,15 @@ module.exports = function(io) {
             try {
                 const round = await Round.query()
                     .max('id as max')
-                    .where('group_id', '!=', group.id)
+                    .where('group_id', '!=', group_id)
                     .orWhere( (builder) => {
-                        builder.where('group_id', group.id).whereNotNull('user_id')
+                        builder.where('group_id', group_id).whereNotNull('user_id')
                     })
 
                 if(round.length && round[0].max) {
                     // do something
                     const newRound = await Round.query()
-                        .insert({ id: round[0].max + 1, group_id: group.id })
+                        .insert({ id: round[0].max + 1, group_id: group_id })
 
                     logger.debug('created round: %j', newRound)
                     if(newRound) broadcastUpdate()
@@ -186,9 +190,10 @@ module.exports = function(io) {
         socket.on('accept', async (round) => {
             logger.info('accept round from user %s: %j', user_id, round)
             try {
+                const id = parseInt(round.id, 10)
                 const rd = await Round.query()
                     .update({ user_id })
-                    .where({ id: round.id})
+                    .where({ id })
                     .whereNull('user_id')
                 logger.debug('accepted %s round(s)', rd)
                 if(rd) broadcastUpdate()
@@ -201,13 +206,13 @@ module.exports = function(io) {
         // send some initial data
         socket.emit('user', user_id)
 
-        const recents = await getRecentRequests(group.id, user_id)
+        const recents = await getRecentRequests(group_id, user_id)
         socket.emit('recents', recents)
 
         // join the group broadcast
         socket.join(group.name)
 
-        const rounds = await getRounds(group.id)
+        const rounds = await getRounds(group_id)
         socket.emit('rounds', rounds)
 
 
