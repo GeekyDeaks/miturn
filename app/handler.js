@@ -171,15 +171,15 @@ module.exports = function(io) {
                     .orWhere( (builder) => {
                         builder.where('group_id', group_id).whereNotNull('user_id')
                     })
+                
+                const id = round.length && round[0].max ? round[0].max + 1 : 1
+                // do something
+                const newRound = await Round.query()
+                    .insert({ id, group_id })
 
-                if(round.length && round[0].max) {
-                    // do something
-                    const newRound = await Round.query()
-                        .insert({ id: round[0].max + 1, group_id: group_id })
-
-                    logger.debug('created round: %j', newRound)
-                    if(newRound) broadcastUpdate()
-                }
+                logger.debug('created round: %j', newRound)
+                if(newRound) broadcastUpdate()
+            
             } catch(ex) {
                 logger.error('failed to create new round:', ex)
             }
