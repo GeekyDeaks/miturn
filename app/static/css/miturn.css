@@ -193,6 +193,16 @@ body {
     cursor: pointer;
 }
 
+.webhook {
+    background-color: lightseagreen;
+    max-height: 38px;
+    width: auto;
+    margin: 2px;
+    border-radius: 3px;
+    padding: 5px;
+    cursor: pointer;
+}
+
 .request-input {
     background-color: #505090;
     color: white;

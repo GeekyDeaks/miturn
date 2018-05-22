@@ -80,7 +80,7 @@ render(app, {
 })
 
 logger.info('Installing routes')
-app.use(require('./routes/api'))
+app.use(require('./routes/webhook'))
 app.use(require('./routes/group'))
 
 logger.info('Start server')

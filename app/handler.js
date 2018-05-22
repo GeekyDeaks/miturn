@@ -144,6 +144,7 @@ module.exports = function(io) {
             }
 
         })
+        
         socket.on('remove', async (id) => {
             logger.info('remove request from user %s: %s', user_id, id)
             try {
@@ -160,29 +161,14 @@ module.exports = function(io) {
 
         socket.on('round', async () => {
             logger.info('new round request from user %s', user_id)
-            // try and create a new round with an
-            // id one more that the largest id of
-            // all rounds not in this group or
-            // that are inactive in this group
-            try {
-                const round = await Round.query()
-                    .max('id as max')
-                    .where('group_id', '!=', group_id)
-                    .orWhere( (builder) => {
-                        builder.where('group_id', group_id).whereNotNull('user_id')
-                    })
-                
-                const id = round.length && round[0].max ? round[0].max + 1 : 1
-                // do something
-                const newRound = await Round.query()
-                    .insert({ id, group_id })
 
-                logger.debug('created round: %j', newRound)
-                if(newRound) broadcastUpdate()
-            
-            } catch(ex) {
-                logger.error('failed to create new round:', ex)
+            const round = await Round.getOrCreateActive(group_id)
+
+            if(round && round.created) {
+                logger.debug('created round: %j', round)
+                broadcastUpdate()
             }
+
 
         })
 

@@ -15,8 +15,11 @@
         <!-- Templates -->
         <script type="text/x-template" id="recent-item-template">
             <div class="row no-gutters">
-                <div class="col-xs-12" v-on:click.prevent="newRequest(recent, round)">
+                <div class="col-xs-10" v-on:click.prevent="newRequest(recent, round)">
                     <div class="recent">{{ recent }}</div>
+                </div>
+                <div class="col-xs-2" v-on:click.prevent="getWebhook(recent)">
+                    <img class="webhook" src="/images/link.svg" />
                 </div>
             </div>
         </script>
