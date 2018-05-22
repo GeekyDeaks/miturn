@@ -7,6 +7,10 @@ class Round extends Model {
         return 'round'
     }
 
+    async $beforeUpdate(context) {
+        await super.$beforeUpdate(context)
+        this.updated_at = new Date()
+    }
 
     static get relationMappings() {
         // we import here to prevent require loops
