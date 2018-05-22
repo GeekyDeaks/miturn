@@ -41,9 +41,11 @@ async function getRounds(group_id) {
 
     const roundsTotal =  await Round.query()
         .select('round.user_id').count('round.user_id as total')
-        .innerJoin('request', 'round.id', 'request.round_id')
+        .innerJoin('request', (builder) => {
+            builder.on('round.id', '=', 'request.round_id')
+                .andOn('request.user_id', '!=', 'round.user_id')
+        })
         .where({ 'round.group_id': group_id })
-        .andWhere('request.user_id', '!=', 'round.user_id')
         .whereNotNull('round.user_id')  // only count rounds that have been completed
         .groupBy('round.user_id')
 
