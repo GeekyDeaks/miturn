@@ -75,6 +75,11 @@ Vue.component('request-item', {
     },
     isMyRequest: function() {
       return this.request.user_id === app.user_id
+    },
+    title: function() {
+      if(this.request.rounds >= 0 && this.request.requests >= 0) {
+        return (this.request.rounds + ' / ' + this.request.requests)
+      } else return null
     }
   },
   methods: {
@@ -114,7 +119,8 @@ function startVue(group, session) {
       showNewRound: function() {
         // wait until we have recieved some data, even if it is empty
         if(!this.receivedRounds) return false
-
+        // allow creation if there are no rounds in the group
+        if(this.rounds.length === 0) return true
         // see if any of the rounds are not active
         var rd = this.rounds.find( function(r) {
           return r.active

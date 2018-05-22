@@ -17,6 +17,27 @@ module.exports = {
         },
         debug: false
     },
+    db_azure: {
+        client: 'mssql',
+        connection: {
+            // note that the location and name of some of these
+            // settings deviates from the tedious docs
+            server : '<hostname>.database.windows.net',
+            user : '<user>',
+            password : '<password>',
+            database: '<database>',
+            options: {
+                port: 1433,
+                encrypt: true
+            }
+        },
+        useNullAsDefault: true,
+        migrations: {
+            directory: 'db/migrations'
+        },
+        debug: false
+    },
     logger: 'debug',
+    // only dev or aad auth options supported
     auth: 'dev'
 }

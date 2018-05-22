@@ -86,6 +86,9 @@ app.use(require('./routes/group'))
 logger.info('Start server')
 async function init () {
     try {
+
+        logger.info('initialising DB')
+        await knex.migrate.latest()
         // to help with unit tests we allow the app to be closed and the DB cleared
         // but this means we need to 
         const listen = promisify(server.listen.bind(server))

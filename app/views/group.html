@@ -22,7 +22,7 @@
 
         <script type="text/x-template" id="request-item-template">
         
-            <div class="row no-gutters">
+            <div class="row no-gutters" v-bind:title="title">
                 <div class="col-xs-1">
                     <div v-if="isMyRequest" v-on:click.prevent="remove(request)" class="request-delete">X</div>
                 </div>
