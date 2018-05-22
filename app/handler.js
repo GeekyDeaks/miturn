@@ -10,6 +10,7 @@ const Session = require('./models/session')
 const Group = require('./models/group')
 const Round = require('./models/round')
 const Request = require('./models/request')
+const Webhook = require('./models/webhook')
 
 async function getRecentRequests(group_id, user_id) {
     logger.debug('getting recents for %s / %s', group_id, user_id)
@@ -92,7 +93,13 @@ async function getRounds(group_id) {
 
 }
 
-module.exports = function(io) {
+module.exports.init = function(io) {
+
+    async function broadcastUpdate(group_id) {
+        const rounds = await getRounds(group_id)
+        io.to(group_id).emit('rounds', rounds)
+    }
+    module.exports.broadcastUpdate = broadcastUpdate
 
     io.on('connection', async function(socket) {
         logger.debug('connection from %s', socket.id)
@@ -115,10 +122,7 @@ module.exports = function(io) {
         if(!group) return socket.emit('nogroup')
         const group_id = parseInt(group.id, 10)
 
-        async function broadcastUpdate() {
-            const rounds = await getRounds(group_id)
-            io.to(group.name).emit('rounds', rounds)
-        }
+
 
         // setup the handler
         socket.on('request', async (request, round_id) => {
@@ -134,7 +138,7 @@ module.exports = function(io) {
     
                 logger.debug('created request %j', req)
                 if(req) {
-                    broadcastUpdate()
+                    await broadcastUpdate(group_id)
                     // update the recents
                     const recents = await getRecentRequests(group_id, user_id)
                     socket.emit('recents', recents)
@@ -144,6 +148,7 @@ module.exports = function(io) {
             }
 
         })
+
         socket.on('remove', async (id) => {
             logger.info('remove request from user %s: %s', user_id, id)
             try {
@@ -152,7 +157,7 @@ module.exports = function(io) {
                     .where('id', id)
 
                 logger.debug('removed %s request(s)', req)
-                if(req) broadcastUpdate()
+                if(req) return broadcastUpdate(group_id)
             } catch(ex) {
                 logger.error('failed to remove request %s:', id, ex)
             }
@@ -160,29 +165,14 @@ module.exports = function(io) {
 
         socket.on('round', async () => {
             logger.info('new round request from user %s', user_id)
-            // try and create a new round with an
-            // id one more that the largest id of
-            // all rounds not in this group or
-            // that are inactive in this group
-            try {
-                const round = await Round.query()
-                    .max('id as max')
-                    .where('group_id', '!=', group_id)
-                    .orWhere( (builder) => {
-                        builder.where('group_id', group_id).whereNotNull('user_id')
-                    })
-                
-                const id = round.length && round[0].max ? round[0].max + 1 : 1
-                // do something
-                const newRound = await Round.query()
-                    .insert({ id, group_id })
 
-                logger.debug('created round: %j', newRound)
-                if(newRound) broadcastUpdate()
-            
-            } catch(ex) {
-                logger.error('failed to create new round:', ex)
+            const round = await Round.getOrCreateActive(group_id)
+
+            if(round && round.created) {
+                logger.debug('created round: %j', round)
+                return broadcastUpdate(group_id)
             }
+
 
         })
 
@@ -195,10 +185,31 @@ module.exports = function(io) {
                     .where({ id })
                     .whereNull('user_id')
                 logger.debug('accepted %s round(s)', rd)
-                if(rd) broadcastUpdate()
+                if(rd) return broadcastUpdate(group_id)
             } catch(ex) {
                 logger.error('failed to accept round', ex)
             }
+
+        })
+
+        socket.on('webhook', async(request) => {
+            logger.info('get webhook for user %s: %s, %s', user_id, group_id, request)
+
+            let webhook = await Webhook.query()
+                .where({ user_id, group_id, request })
+                .first()
+        
+            if(!webhook) {
+                // create the webhook
+                webhook = await Webhook.query().insertAndFetch({
+                    user_id, group_id, request
+                })
+
+            }
+
+            logger.debug('webhook: %j', webhook)
+
+            socket.emit('webhook', webhook.id)
 
         })
 
@@ -209,7 +220,7 @@ module.exports = function(io) {
         socket.emit('recents', recents)
 
         // join the group broadcast
-        socket.join(group.name)
+        socket.join(group_id)
 
         const rounds = await getRounds(group_id)
         socket.emit('rounds', rounds)

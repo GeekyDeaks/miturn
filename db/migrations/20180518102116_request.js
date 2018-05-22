@@ -9,7 +9,7 @@ exports.up = function(knex) {
         t.string('request').notNullable()
         t.foreign('round_id').references('id').inTable('round')
         t.foreign('user_id').references('id').inTable('user')
-        t.index(['round_id'])
+        t.unique(['round_id', 'user_id'])
     })
 }
 

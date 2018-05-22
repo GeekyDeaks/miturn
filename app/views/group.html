@@ -15,8 +15,11 @@
         <!-- Templates -->
         <script type="text/x-template" id="recent-item-template">
             <div class="row no-gutters">
-                <div class="col-xs-12" v-on:click.prevent="newRequest(recent, round)">
+                <div class="col-xs-10" v-on:click.prevent="newRequest(recent, round)">
                     <div class="recent">{{ recent }}</div>
+                </div>
+                <div class="col-xs-2" v-on:click.prevent="getWebhook(recent)">
+                    <img class="webhook" src="/images/link.svg" />
                 </div>
             </div>
         </script>
@@ -73,23 +76,23 @@
                                 v-bind:key="recent">
                             </recent-item>
 
-                            <div class="col-sm-12">
-                                <div class="input-group request-input">
-                                <input type="text" class="form-control" 
-                                    v-model="requestInput" placeholder="Enter request"
-                                    v-on:keyup.enter.prevent="newRequestInput(round)">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="submit" v-on:click.prevent="newRequestInput(round)">Submit</button>
-                                </span>
+                            <div class="row no-gutters">
+                                <div class="col-xs-12">
+                                    <div class="input-group request-input">
+                                        <input type="text" class="form-control" 
+                                            v-model="requestInput" placeholder="Enter request"
+                                            v-on:keyup.enter.prevent="newRequestInput(round)">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit" v-on:click.prevent="newRequestInput(round)">Submit</button>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
+
         </script>
 
     </head>
@@ -98,6 +101,11 @@
             <h1 class="col-xs-12 title"><%= group %></h1>
             <h2 v-cloak class="col-xs-12 error" v-if="error">{{ error }}</h2>
             <div v-cloak>
+                <div class="row no-gutters" v-on:click.prevent="toggleVisible">
+                    <div class="col-xs-1"><div class="header">#</div></div>
+                    <div class="col-xs-6"><div class="header">Date/Time</div></div>
+                    <div class="col-xs-5"><div class="header-user">Who</div></div>
+                </div>
                 <round-item
                     v-for="(round, index) in rounds"
                     v-bind:round="round"
@@ -107,6 +115,12 @@
                 <div v-if="showNewRound" class="row no-gutters">
                     <div class="col-xs-12" v-on:click.prevent="newRound">
                         <div class="new-round">New Round</div>
+                    </div>
+                </div>
+                <div class="row no-gutters" v-if="webhookUrl">
+                    <div class="webhook-header">Webhook</div>
+                    <div class="col-xs-12">
+                            <input type="text" class="form-control" v-model="webhookUrl">
                     </div>
                 </div>
                 

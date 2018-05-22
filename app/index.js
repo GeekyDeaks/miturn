@@ -47,7 +47,8 @@ const app = new Koa()
 const http = require('http')
 const server = http.createServer(app.callback())
 const io = require('socket.io')(server)
-require('./handler')(io)
+const handler = require('./handler')
+handler.init(io)
 
 const serve = require('koa-static')
 const render = require('koa-ejs')
@@ -80,7 +81,7 @@ render(app, {
 })
 
 logger.info('Installing routes')
-app.use(require('./routes/api'))
+app.use(require('./routes/webhook'))
 app.use(require('./routes/group'))
 
 logger.info('Start server')
