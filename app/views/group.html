@@ -13,8 +13,10 @@
 
         <!-- Templates -->
         <script type="text/x-template" id="recent-item-template">
-            <div class="col-xs-12" v-on:click.prevent="newRequest(recent, round)">
-                <div class="recent">{{ recent }}</div>
+            <div class="row no-gutters">
+                <div class="col-xs-12" v-on:click.prevent="newRequest(recent, round)">
+                    <div class="recent">{{ recent }}</div>
+                </div>
             </div>
         </script>
 
@@ -91,7 +93,7 @@
 
     </head>
     <body>
-        <div id="app">
+        <div id="app" class="app">
             <h1 class="col-xs-12 title"><%= group %></h1>
             <div v-cloak>
                 <round-item

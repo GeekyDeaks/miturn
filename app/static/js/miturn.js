@@ -4,6 +4,9 @@
 Vue.component('round-item',  {
   props: ['round', 'index'],
   template: '#round-item-template',
+  data: function() {
+    return { requestInput: '' }
+  },
   computed: {
     haveActiveRequest: function() {
       var req = this.round.requests.find(function(r) {
@@ -85,7 +88,6 @@ Vue.component('request-item', {
 Vue.component('recent-item', {
   props: ['recent', 'round'],
   template: '#recent-item-template',
-
   methods: {
     newRequest: function(item, round) {
       console.log('new request: ', item, round)
