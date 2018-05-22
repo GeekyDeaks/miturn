@@ -7,6 +7,8 @@ const { HTTP_CREATED, HTTP_CONFLICT } = require('../util/const')
 
 const Webhook = require('../models/webhook')
 const Round = require('../models/round')
+const Request = require('../models/request')
+const handler = require('../handler')
 
 router.post('/webhook/:key', async function (ctx) {
 
@@ -27,6 +29,7 @@ router.post('/webhook/:key', async function (ctx) {
             user_id,
             request
         })
+        handler.broadcastUpdate(group_id)
         ctx.status = HTTP_CREATED
     } catch(ex) {
         logger.error('failed to create webook request: %j', hook, ex)

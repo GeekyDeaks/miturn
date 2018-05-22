@@ -97,6 +97,10 @@ Vue.component('recent-item', {
       console.log('new request: ', item, round)
       app.showRecent = false
       app.io.emit('request', item, round.id)
+    },
+    getWebhook: function(request) {
+      console.log('get webhook: '+ request)
+      app.io.emit('webhook', request)
     }
   }
 })
@@ -185,6 +189,12 @@ function startVue(group, session) {
 
       this.io.on('nogroup', function() {
         that.error = 'Group does not exist'
+      })
+
+      this.io.on('webhook', function(webhook) {
+        console.log('got webhook: ' + webhook)
+        var url = document.location.origin + '/webhook/' + webhook 
+        console.log('webhook url: '+ url)
       })
   
   

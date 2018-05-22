@@ -28,7 +28,7 @@ class Webhook extends Model {
                     to: 'user.id'
                 }
             },
-            round: {
+            group: {
                 relation: Model.HasOneRelation,
                 modelClass: Group,
                 join: {
