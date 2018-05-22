@@ -1,6 +1,5 @@
 /* eslint-disable */
-
-
+if(window.hasOwnProperty('Vue'))
 Vue.component('round-item',  {
   props: ['round', 'index'],
   template: '#round-item-template',

@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="/css/normalize.css">
         <link rel="stylesheet" href="/css/bootstrap.css">
         <link rel="stylesheet" href="/css/miturn.css">
+        <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
         <script src="/js/vue.js"></script>
         <script src="/js/socket.io.dev.js"></script>
         <script src="/js/moment.js"></script>
@@ -95,7 +96,7 @@
     <body>
         <div id="app" class="app">
             <h1 class="col-xs-12 title"><%= group %></h1>
-            <h2 class="col-xs-12 error" v-if="error">{{ error }}</h2>
+            <h2 v-cloak class="col-xs-12 error" v-if="error">{{ error }}</h2>
             <div v-cloak>
                 <round-item
                     v-for="(round, index) in rounds"
@@ -110,8 +111,17 @@
                 </div>
                 
             </div>
+            <h2 style="display:none" id="detect" class="col-xs-12 error">
+                    Sorry, you need a more modern browser
+            </h2>
+            <noscript>
+                <h2 class="col-xs-12 error">
+                    This app requires JavaScript enabled
+                </h2>
+            </noscript>
         </div>
 
+        <script src="/js/detect.js"></script>
         <script src="/js/miturn.js"></script>
         <script>app = startVue('<%= group %>', '<%= session %>')</script>
     </body>
