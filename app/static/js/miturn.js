@@ -107,10 +107,14 @@ function startVue(group, session) {
       recents: [],
       user_id: null,
       showRecent: false,
-      requestInput: null
+      requestInput: null,
+      receivedRounds: false
     },
     computed: {
       showNewRound: function() {
+        // wait until we have recieved some data, even if it is empty
+        if(!this.receivedRounds) return false
+
         // see if any of the rounds are not active
         var rd = this.rounds.find( function(r) {
           return r.active
@@ -158,6 +162,7 @@ function startVue(group, session) {
           rounds[rounds.length - 1].visible = true
         }
         that.rounds = rounds
+        that.receivedRounds = true
       })
 
       this.io.on('recents', function(recents) {

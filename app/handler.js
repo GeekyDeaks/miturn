@@ -204,11 +204,13 @@ module.exports = function(io) {
         const recents = await getRecentRequests(group.id, user_id)
         socket.emit('recents', recents)
 
+        // join the group broadcast
+        socket.join(group.name)
+
         const rounds = await getRounds(group.id)
         socket.emit('rounds', rounds)
 
-        // join the group broadcast
-        socket.join(group.name)
+
         
     })
 
