@@ -121,53 +121,81 @@ module.exports = function(io) {
 
         // setup the handler
         socket.on('request', async (request, round_id) => {
+            logger.info('new request from user %s: %s, round: %s', user_id, request, round_id)
             // should we check there is an active 
-            const req = await Request.query().insert({
-                request,
-                user_id,
-                round_id
-            })
-
-            if(req) {
-                broadcastUpdate()
-                // update the recents
-                const recents = await getRecentRequests(group.id, user_id)
-                socket.emit('recents', recents)
+            try {
+                const req = await Request.query().insertAndFetch({
+                    request,
+                    user_id,
+                    round_id
+                })
+    
+                logger.debug('created request %j', req)
+                if(req) {
+                    broadcastUpdate()
+                    // update the recents
+                    const recents = await getRecentRequests(group.id, user_id)
+                    socket.emit('recents', recents)
+                }
+            } catch(ex) {
+                logger.error('failed to create new request:', ex)
             }
+
         })
         socket.on('remove', async (id) => {
-            const req = await Request.query().delete()
-                .where('id', id)
+            logger.info('remove request from user %s: %s', user_id, id)
+            try {
+                const req = await Request.query().delete()
+                    .where('id', id)
 
-            if(req) broadcastUpdate()
+                logger.debug('removed %s request(s)', req)
+                if(req) broadcastUpdate()
+            } catch(ex) {
+                logger.error('failed to remove request %s:', id, ex)
+            }
         })
 
         socket.on('round', async () => {
+            logger.info('new round request from user %s', user_id)
             // try and create a new round with an
             // id one more that the largest id of
             // all rounds not in this group or
             // that are inactive in this group
-            const round = await Round.query()
-                .max('id as max')
-                .where('group_id', '!=', group.id)
-                .orWhereNull('user_id')
+            try {
+                const round = await Round.query()
+                    .max('id as max')
+                    .where('group_id', '!=', group.id)
+                    .orWhere( (builder) => {
+                        builder.where('group_id', group.id).whereNotNull('user_id')
+                    })
 
-            if(round) {
-                // do something
-                const newRound = await Round.query()
-                    .insert({ id: round.max + 1, group_id: group.id })
+                if(round.length && round[0].max) {
+                    // do something
+                    const newRound = await Round.query()
+                        .insert({ id: round[0].max + 1, group_id: group.id })
 
-                if(newRound) broadcastUpdate()
+                    logger.debug('created round: %j', newRound)
+                    if(newRound) broadcastUpdate()
+                }
+            } catch(ex) {
+                logger.error('failed to create new round:', ex)
             }
+
         })
 
         socket.on('accept', async (round) => {
-            const rd = await Round.query()
-                .update({ user_id })
-                .where({ id: round.id})
-                .whereNull('user_id')
-            
-            if(rd) broadcastUpdate()
+            logger.info('accept round from user %s: %j', user_id, round)
+            try {
+                const rd = await Round.query()
+                    .update({ user_id })
+                    .where({ id: round.id})
+                    .whereNull('user_id')
+                logger.debug('accepted %s round(s)', rd)
+                if(rd) broadcastUpdate()
+            } catch(ex) {
+                logger.error('failed to accept round', ex)
+            }
+
         })
 
         // send some initial data
