@@ -113,7 +113,8 @@ function startVue(group, session) {
       user_id: null,
       showRecent: false,
       requestInput: null,
-      receivedRounds: false
+      receivedRounds: false,
+      error: null
     },
     computed: {
       showNewRound: function() {
@@ -177,6 +178,14 @@ function startVue(group, session) {
 
       this.io.on('user', function(user_id) {
         that.user_id = user_id
+      })
+
+      this.io.on('nosession', function() {
+        that.error = 'Failed to create session'
+      })
+
+      this.io.on('nogroup', function() {
+        that.error = 'Group does not exist'
       })
   
   

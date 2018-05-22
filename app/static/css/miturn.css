@@ -7,6 +7,14 @@ body {
     font-size: small;
 }
 
+.error {
+    text-align: center;
+    background-color: red;
+    border-radius: 5px;
+    padding: 15px;
+    color: white;
+}
+
 .title {
     text-align: center;
     background-color: darkorange;
