@@ -30,7 +30,7 @@ async function getRounds(group_id) {
     // get the 
     //await.knex()
     const rawRounds = await Round.query().where({ group_id})
-        .orderBy('id', 'desc').limit(ROUNDS)
+        .orderBy('updated_at', 'desc').limit(ROUNDS)
         .eager('[requests, requests.user, user]')
 
     const requestTotal = await Request.query()
