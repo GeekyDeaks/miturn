@@ -19,7 +19,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^4.0.3",
     "lodash": "^4.17.13",
-    "moment": "^2.22.1",
+    "moment": "^2.29.4",
     "mssql": "git+https://github.com/GeekyDeaks/node-mssql.git",
     "objection": "^1.1.8",
     "socket.io": "^2.1.1",
